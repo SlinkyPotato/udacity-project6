@@ -1,4 +1,5 @@
-pragma solidity ^0.6.12;
+// SPDX-License-Identifier: GPL-3.0
+pragma solidity >=0.6.12;
 
 // Import the library 'Roles'
 import "./Roles.sol";
@@ -49,6 +50,6 @@ contract DistributorRole {
   // Define an internal function '_removeDistributor' to remove this role, called by 'removeDistributor'
   function _removeDistributor(address account) internal {
     distributors.remove(account);
-    emit DistributorRemoved(addount);
+    emit DistributorRemoved(account);
   }
 }

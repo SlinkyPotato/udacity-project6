@@ -1,4 +1,5 @@
-pragma solidity ^0.6.12;
+// SPDX-License-Identifier: GPL-3.0
+pragma solidity >=0.6.12;
 
 // Import the library 'Roles'
 import "./Roles.sol";
