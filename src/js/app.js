@@ -168,6 +168,7 @@ App = {
         var processId = parseInt($(event.target).data('id'));
 
         App.contracts.SupplyChain.deployed().then(function(instance) {
+            console.log("upc: " + App.upc + ", is being harvested");
             return instance.harvestItem(
                 App.upc, 
                 App.metamaskAccountID, 
