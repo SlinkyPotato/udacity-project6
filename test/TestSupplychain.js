@@ -52,9 +52,10 @@ contract('SupplyChain', async(accounts) => {
             eventEmitted = true
         });
 
+        await supplyChain.addFarmer(originFarmerID);
 
         // Mark an item as Harvested by calling function harvestItem()
-        await supplyChain.harvestItem(upc, originFarmerID, originFarmName, originFarmInformation, originFarmLatitude, originFarmLongitude, productNotes);
+        await supplyChain.harvestItem(upc, originFarmerID, originFarmName, originFarmInformation, originFarmLatitude, originFarmLongitude, productNotes, {from: originFarmerID});
 
         // Retrieve the just now saved item from blockchain by calling function fetchItem()
         const resultBufferOne = await supplyChain.fetchItemBufferOne.call(upc)
@@ -85,6 +86,8 @@ contract('SupplyChain', async(accounts) => {
             eventEmitted = true;
         });
 
+        // await supplyChain.addFarmer(originFarmerID);
+
         // Mark an item as Processed by calling function processItem()
         await supplyChain.processItem(upc);
 
@@ -110,6 +113,8 @@ contract('SupplyChain', async(accounts) => {
             eventEmitted = true;
         });
 
+        // await supplyChain.addFarmer(originFarmerID);
+
         // Mark an item as Packed by calling function packItem()
         await supplyChain.packItem(upc);
         
@@ -132,6 +137,8 @@ contract('SupplyChain', async(accounts) => {
         supplyChain.contract.events.ForSale({}, (err, res) => {
             eventEmitted = true;
         });
+
+        // await supplyChain.addFarmer(originFarmerID);
 
         // Mark an item as ForSale by calling function sellItem()
         await supplyChain.sellItem(upc, productPrice);
@@ -156,6 +163,8 @@ contract('SupplyChain', async(accounts) => {
         supplyChain.contract.events.Sold({}, (err, res) => {
             eventEmitted = true;
         });
+
+        await supplyChain.addDistributor(distributorID);
         
         // Mark an item as Sold by calling function buyItem()
         await supplyChain.buyItem(upc, {from: distributorID, value: productPrice});
@@ -183,6 +192,8 @@ contract('SupplyChain', async(accounts) => {
             eventEmitted = true;
         });
 
+        // await supplyChain.addDistributor(distributorID);
+
         // Mark an item as shipped by calling function shipItem()
         await supplyChain.shipItem(upc);
 
@@ -205,6 +216,8 @@ contract('SupplyChain', async(accounts) => {
         supplyChain.contract.events.Received({}, (err, res) => {
             eventEmitted = true;
         });
+
+        await supplyChain.addRetailer(retailerID);
 
         // Mark an item as Sold by calling function buyItem()
         await supplyChain.receiveItem(upc, {from: retailerID});
@@ -232,8 +245,10 @@ contract('SupplyChain', async(accounts) => {
             eventEmitted = true;
         });
 
+        await supplyChain.addConsumer(consumerID);
+
         // Mark an item as Sold by calling function buyItem()
-        await supplyChain.purchaseItem(upc, {from: consumerID});
+        await supplyChain.purchaseItem(upc, {from: consumerID, value: productPrice});
 
         // Retrieve the just now saved item from blockchain by calling function fetchItem()
         const resultBufferOne = await supplyChain.fetchItemBufferOne.call(upc);
