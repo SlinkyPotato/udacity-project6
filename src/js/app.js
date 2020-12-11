@@ -62,7 +62,8 @@ App = {
             App.web3Provider = window.ethereum;
             try {
                 // Request account access
-                await window.ethereum.enable();
+                // await window.ethereum.enable(); // deprecated
+                await window.ethereum.request({method: 'eth_requestAccounts'});
             } catch (error) {
                 // User denied account access...
                 console.error("User denied account access")
@@ -163,7 +164,7 @@ App = {
             }
     },
 
-    harvestItem: function(event) {
+    harvestItem: async function(event) {
         event.preventDefault();
         var processId = parseInt($(event.target).data('id'));
 
@@ -180,6 +181,7 @@ App = {
             );
         }).then(function(result) {
             $("#ftc-item").text(result);
+            $("#process-result").text(result);
             console.log('harvestItem',result);
         }).catch(function(err) {
             console.log(err.message);
@@ -288,36 +290,46 @@ App = {
     },
 
     fetchItemBufferOne: function () {
+        console.log("calling fetchItemBufferOne()....");
     ///   event.preventDefault();
     ///    var processId = parseInt($(event.target).data('id'));
         App.upc = $('#upc').val();
-        console.log('upc',App.upc);
+        console.log('upc', App.upc);
 
         App.contracts.SupplyChain.deployed().then(function(instance) {
-          return instance.fetchItemBufferOne(App.upc);
+            return instance.fetchItemBufferOne.call(App.upc);
         }).then(function(result) {
-          $("#ftc-item").text(result);
-          console.log('fetchItemBufferOne', result);
+            console.log("fetchItemBufferOne() call successful");
+            $("#ftc-item").text(result);
+            $("#buffer-result-1").text(result);
+             console.log('fetchItemBufferOne', result);
         }).catch(function(err) {
-          console.log(err.message);
+            console.log("fetchItemBufferOne() failed");
+            console.log(err.message);
         });
     },
 
     fetchItemBufferTwo: function () {
+        console.log("calling fetchItemBufferTwo()...");
     ///    event.preventDefault();
     ///    var processId = parseInt($(event.target).data('id'));
                         
         App.contracts.SupplyChain.deployed().then(function(instance) {
           return instance.fetchItemBufferTwo.call(App.upc);
         }).then(function(result) {
+            console.log("fetchItemBufferTwo() successful");
           $("#ftc-item").text(result);
           console.log('fetchItemBufferTwo', result);
+          $("#buffer-result-2").text(result);
         }).catch(function(err) {
+            console.log("fetchItemBufferTwo() failed");
           console.log(err.message);
         });
     },
 
     fetchEvents: function () {
+        console.log("calling fetchEvents()...");
+
         if (typeof App.contracts.SupplyChain.currentProvider.sendAsync !== "function") {
             App.contracts.SupplyChain.currentProvider.sendAsync = function () {
                 return App.contracts.SupplyChain.currentProvider.send.apply(
@@ -327,13 +339,19 @@ App = {
             };
         }
 
+        console.log("calling allEvents()...");
         App.contracts.SupplyChain.deployed().then(function(instance) {
-        var events = instance.allEvents(function(err, log){
-          if (!err)
-            $("#ftc-events").append('<li>' + log.event + ' - ' + log.transactionHash + '</li>');
-        });
+            var events = instance.allEvents(function(err, log) {
+                if (!err) {
+                    console.log("call to allEvents() successful");
+                    $("#ftc-events").append('<li>' + log.event + ' - ' + log.transactionHash + '</li>');
+                } else {
+                    console.log(err);
+                }
+            });
+            console.log("events: " + events);
         }).catch(function(err) {
-          console.log(err.message);
+            console.log(err.message);
         });
         
     }
